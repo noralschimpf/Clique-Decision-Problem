@@ -1,0 +1,68 @@
+Southern women (Brunson) network, part of the Koblenz Network Collection
+===========================================================================
+
+This directory contains the TSV and related files of the brunson_southern-women network: This bipartite dataset shows the participation of women in social events over a nine-month period. The data was collected in the Southern United States of America in the 1930s. In comparison to the other southern women dataset this network only consists of African-American women. There is an edge for every woman who participates in an event. The left node represents a woman and the ride lnode represents an event.
+
+
+More information about the network is provided here: 
+http://konect.cc/networks/brunson_southern-women
+
+Files: 
+    meta.brunson_southern-women -- Metadata about the network 
+    out.brunson_southern-women -- The adjacency matrix of the network in whitespace-separated values format, with one edge per line
+      The meaning of the columns in out.brunson_southern-women are: 
+        First column: ID of from node 
+        Second column: ID of to node
+        Third column (if present): weight or multiplicity of edge
+        Fourth column (if present):  timestamp of edges Unix time
+
+
+Use the following References for citation:
+
+@MISC{konect:2017:brunson_southern-women,
+    title = {Southern women (Brunson) network dataset -- {KONECT}},
+    month = oct,
+    year = {2017},
+    url = {http://konect.cc/networks/brunson_southern-women}
+}
+
+@book{konect:southernwomen,
+	title = {Deep South; a Social Anthropological Study of Caste and Class},
+	author = {Davis, Allison and Gardner, Burleigh B. and Gardner, Mary R.},
+	publisher = {The Univ. of Chicago Press},
+	year = {1941},
+}
+
+@book{konect:southernwomen,
+	title = {Deep South; a Social Anthropological Study of Caste and Class},
+	author = {Davis, Allison and Gardner, Burleigh B. and Gardner, Mary R.},
+	publisher = {The Univ. of Chicago Press},
+	year = {1941},
+}
+
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://dl.acm.org/citation.cfm?id=2488173},
+	url_presentation = {https://www.slideshare.net/kunegis/presentationwow},
+	url_web = {http://konect.cc/},
+	url_citations = {https://scholar.google.com/scholar?cites=7174338004474749050},
+}
+
+@inproceedings{konect,
+	title = {{KONECT} -- {The} {Koblenz} {Network} {Collection}},
+	author = {Jérôme Kunegis},
+	year = {2013},
+	booktitle = {Proc. Int. Conf. on World Wide Web Companion},
+	pages = {1343--1350},
+	url = {http://dl.acm.org/citation.cfm?id=2488173},
+	url_presentation = {https://www.slideshare.net/kunegis/presentationwow},
+	url_web = {http://konect.cc/},
+	url_citations = {https://scholar.google.com/scholar?cites=7174338004474749050},
+}
+
+
