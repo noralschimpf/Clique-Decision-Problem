@@ -11,5 +11,6 @@ However, it is a commonly-used variant of the clique problem because it is NP-co
 Other variants (such as Maximum Clique) are commonly related to communications, chemistry, and bioinformatics.
 
 ## Data
-For initial development, simple graphs are presented from the [Koblenz Network Collection](http://konect.cc/).
-Additional data may be pulled from the [Network Data Repository](https://networkrepository.com/index.php).
+For initial development,DIMACS Dataset via the [Network Data Repository](https://networkrepository.com/index.php).  
+Additional data are collected via the [Koblenz Network Collection](http://konect.cc/).
+ 
