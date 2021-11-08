@@ -46,7 +46,7 @@ def report(data: dict, soln: dict, metrics: dict):
         # line = nx.draw(G_soln, pos=pos, color='r')
         animation = FuncAnimation(fig, func=update_clique, fargs=(G, pos), frames=soln['frames'])
         Writer = writers['ffmpeg']
-        writer = Writer(fps=10, metadata={'artist': 'Me'}, bitrate=1800)
+        writer = Writer(fps=5, metadata={'artist': 'Me'}, bitrate=1800)
         animation.save('Figures/{}/{}/{}.mp4'.format(soln['name'], data['name'],data['name']), writer)
 
 

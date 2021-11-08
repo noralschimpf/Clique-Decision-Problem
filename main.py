@@ -8,7 +8,7 @@ datadir = 'Data/KONNECT'
 def main(algo):
     # load relevant TSP data
     files = os.listdir(datadir)
-    files = files[1:2]
+    # files = files[1:2]
     for f in range(len(files)):
         # if DEBUG and 'General' in datadir: files[f] = 'Random4.tsp'
         dict_data = dl.load_dir(os.path.join(datadir,files[f])) if 'KONNECT' in datadir else dl.load_DIMACS(os.path.join(datadir,files[f]))
@@ -33,5 +33,6 @@ def main(algo):
         viz.report(dict_data, opt_soln, metrics)
 
 if __name__ == '__main__':
-    algos = [GA_BK.GA_Simulate, WorstOut.WorstOutHeuristic]
+    # algos = [GA_BK.GA_Simulate, WorstOut.WorstOutHeuristic]
+    algos = [WorstOut.WorstOutHeuristic]
     for a in algos: main(a)

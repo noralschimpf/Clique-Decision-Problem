@@ -66,14 +66,12 @@ def adjMat_to_edgelist(adjmat: np.array):
             if adjmat[i,j] == 1:
                 edgelist[edgeno,0], edgelist[edgeno,1] = i, j
                 edgeno += 1
-    return edgelist + 1
+    return edgelist +1
 
 def nodelist_to_edgelist(nodelist: np.array, adjmat: np.array):
-    # idxnodes = np.where(nodelist == 1)[0]
-    # sub_adj = adjmat[idxnodes][:,idxnodes]
     G = nx.from_numpy_array(adjmat)
-    sub_adj = nx.to_numpy_array(G, nodelist=np.where(nodelist==1)[0]).astype(np.uint32)
-    return adjMat_to_edgelist(sub_adj)
+    H = G.subgraph(nodes=np.where(nodelist==1)[0])
+    return np.array(list(H.edges)) +1
 
 def edgelist_to_nodelist(edgelist: np.array):
     nodes = []
