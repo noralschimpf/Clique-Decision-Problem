@@ -36,14 +36,12 @@ def report(data: dict, soln: dict, metrics: dict):
 
     fig, ax = P.subplots(1,1)
     nx.draw(G, pos=pos, ax=ax, node_color='tab:blue', edge_color='tab:blue')
+    fig.suptitle(
+        'MCP {} Using {}\nsize: {:.3f}   time:{:.3f} s   mem: {:.3f} KB'.format(
+            data['name'], soln['name'], soln['soln_size'], metrics['time'], metrics['memory']))
 
     # animate solution, if relevant
     if len(soln['frames']) > 0:
-        fig.suptitle(
-            'MCP {} Using {}\nsize: {:.3f}   time:{:.3f} s   mem: {:.3f} KB'.format(
-                data['name'], soln['name'], soln['soln_size'], metrics['time'], metrics['memory']))
-
-        # line = nx.draw(G_soln, pos=pos, color='r')
         animation = FuncAnimation(fig, func=update_clique, fargs=(G, pos), frames=soln['frames'])
         Writer = writers['ffmpeg']
         writer = Writer(fps=5, metadata={'artist': 'Me'}, bitrate=1800)

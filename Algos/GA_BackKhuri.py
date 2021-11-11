@@ -79,11 +79,11 @@ def GA_Simulate(nda_adjMat: np.array, params: dict):
             best_edgelist = soln_dict['soln_edgelist']
 
     return {
-        'soln_edgelist': best_edgelist, 'soln_size': dl.edgelist_to_nodelist(best_edgelist).sum(),
+        'soln_edgelist': best_edgelist, 'soln_size': len(dl.edgelist_to_nodelist(best_edgelist)),
         'fit_curves': fit_curves, 'fits': soln_fits, 'frames': frames
     }
 
-# @jit(nopython=True)
+@jit(nopython=True)
 def BKFitPop(pop: np.array, adjmat: np.array):
     """
     wrapper for BackKhuriFitness
@@ -98,7 +98,7 @@ def BKFitPop(pop: np.array, adjmat: np.array):
     # for i in range(len(fit)): fit[i] = fit[i] / total
     return fit
 
-# @jit(nopython=True)
+@jit(nopython=True)
 def BackKhuriFitness(ind: np.array, adjMat: np.array):
     """
     Proposed fitness function

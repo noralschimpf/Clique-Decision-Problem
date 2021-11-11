@@ -1,8 +1,8 @@
 %%MatrixMarket matrix coordinate pattern symmetric
 % 125 125 6963
-% nodes: 125
-% edges: 7K
-% max_clique_lb:32
+% nodes 125
+% edges 7K
+% max_clique_lb 32
 2 1
 3 1
 4 1

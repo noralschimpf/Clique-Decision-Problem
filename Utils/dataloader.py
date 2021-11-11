@@ -78,4 +78,4 @@ def edgelist_to_nodelist(edgelist: np.array):
     for edge in edgelist:
         if not edge[0] in nodes: nodes.append(edge[0])
         if not edge[1] in nodes: nodes.append(edge[1])
-    return np.array(set(nodes))
+    return np.array(nodes)
