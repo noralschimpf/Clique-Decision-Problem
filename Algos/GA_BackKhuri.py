@@ -1,9 +1,10 @@
 import numpy as np
 import tqdm
-import Utils.GeneticFns as GF
-import Utils.dataloader as dl
 from numba import uint32, jit
 from sklearn.preprocessing import MinMaxScaler
+import Utils.GeneticFns as GF
+import Utils.dataloader as dl
+from Utils.heuristics import BackKhuriFitness
 
 def GA_BackKhuri(nda_adjMat: np.array, params: dict):
     """
@@ -32,14 +33,21 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
     population = GF.pop_init(params['k'], len(nda_adjCompl))
     best_fits = np.zeros(400)
     frames = []
+    soln_nodelist, soln_fit = None, None
     scl = MinMaxScaler(feature_range=(0, 1))
 
     for g in range(400):
 
         # Assess fitness using graded penalty
         fitness = BKFitPop(population, nda_adjCompl)
-        best_fits[g] = max(fitness)
+        best_fits[g] = fitness.max()
+        if soln_fit is None or best_fits[g] > soln_fit:
+            soln_fit = best_fits[g]
+            idx_soln_fit = [i for i in range(len(fitness)) if fitness[i] == soln_fit][0]
+            soln_nodelist = population[idx_soln_fit]
+        # if not len(fitness[fitness >= 0]) < int(len(fitness)/10): fitness[fitness < 0] = 0
         fitness = scl.fit_transform(fitness.reshape(-1,1))
+        fitness = np.exp(2*(fitness-1))
         fitness = fitness / fitness.sum()
         bestfit_normed = max(fitness)
 
@@ -56,11 +64,13 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
         population = np.array([GF.cross_p_point(pair1[i], pair2[i], p=2) for i in range(50)])
         population = np.array([GF.mut_invert(population[i], 1/len(population[0])) for i in range(50)])
 
-    soln_nodelist = 1 - population[np.where(fitness == max(fitness))[0][0]]
+    # TODO: CORRECT ALGO, WRONG FIGURES, TRACE BACK THROUGH
+    soln_nodelist = 1 - soln_nodelist
     return {'soln_edgelist': dl.nodelist_to_edgelist(soln_nodelist, nda_adjMat), 'soln_size': soln_nodelist.sum(),
             'soln_nodelist': soln_nodelist, 'training': best_fits, 'frames': frames}
 
 def GA_Simulate(nda_adjMat: np.array, params: dict):
+    nda_adjCompl = 1 - nda_adjMat
     fit_curves = np.zeros((params['n'], params['g']))
     soln_fits = np.zeros(params['n'])
     best_fit_idx = -1;
@@ -73,7 +83,7 @@ def GA_Simulate(nda_adjMat: np.array, params: dict):
 
         if n == 0: frames = soln_dict['frames']
         fit_curves[n] = soln_dict['training']
-        soln_fits[n] = params['f_fit'](soln_dict['soln_nodelist'], nda_adjMat)
+        soln_fits[n] = BackKhuriFitness(soln_dict['soln_nodelist'],nda_adjCompl)
         if soln_fits[n] > soln_fits[best_fit_idx] or best_fit_idx == -1:
             best_fit_idx = n
             best_edgelist = soln_dict['soln_edgelist']
@@ -86,9 +96,9 @@ def GA_Simulate(nda_adjMat: np.array, params: dict):
 @jit(nopython=True)
 def BKFitPop(pop: np.array, adjmat: np.array):
     """
-    wrapper for BackKhuriFitness
-    :param pop:
-    :param adjmat:
+    wrapper for BackKhuriFitness across complete population
+    :param pop: population matrix
+    :param adjmat:adjacency matrix
     :return:
     """
     fit = np.zeros((len(pop)))
@@ -96,20 +106,4 @@ def BKFitPop(pop: np.array, adjmat: np.array):
         fit[i] = BackKhuriFitness(pop[i], adjmat)
     # total = fit.sum()
     # for i in range(len(fit)): fit[i] = fit[i] / total
-    return fit
-
-@jit(nopython=True)
-def BackKhuriFitness(ind: np.array, adjMat: np.array):
-    """
-    Proposed fitness function
-    incorporates graded penalty to harshly reduce the presence of infeasible individuals
-    :param pop: population, each individual is indicating the presence of each node
-    :return: fitness score of the individual
-    """
-    fit = 0.
-    for i in range(len(ind)):
-        pen = 0
-        for j in range(i,len(ind)):
-            pen += ind[j]*adjMat[i,j]
-        fit += (ind[i] - len(ind)*ind[i]*pen)
     return fit

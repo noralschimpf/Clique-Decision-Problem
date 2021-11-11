@@ -17,19 +17,19 @@ elif 'DIMACS' in datadir: fileorder = ['johnson8-2-4.mtx', 'MANN-a9.mtx',  'hamm
 def main(algo):
     # load relevant TSP data
     # fileorder = fileorder[1:2]
+    params = {'animate': False, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': GA_BK.GA_BackKhuri,
+                                'f_fit': GA_BK.BackKhuriFitness}
     for f in range(len(fileorder)):
         file =  os.path.join(datadir,fileorder[f])
         # if DEBUG and 'General' in datadir: files[f] = 'Random4.tsp'
         dict_data = dl.load_dir(file) if 'KONNECT' in datadir else dl.load_DIMACS(file)
         print(fileorder[f])
-
-        traceflag = f <= 4
+        traceflag = f <= 4; params['animate'] = f < 2
         if traceflag: tracemalloc.start()
         sttime = time.time()
         if traceflag: stcur, stpeak = tracemalloc.get_traced_memory()
         opt_soln = algo(dl.edgelist_to_adjMat(dict_data['nda']),
-                        params={'animate': False, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': GA_BK.GA_BackKhuri,
-                                'f_fit': GA_BK.BackKhuriFitness})
+                        params=params)
         if traceflag:
             edcur, edpeak = tracemalloc.get_traced_memory()
         else:
@@ -38,7 +38,7 @@ def main(algo):
         tracemalloc.stop()
 
         metrics = {'time': edtime - sttime, 'memory': edpeak / 1000}
-        opt_soln['name'] = algo.__name__
+        opt_soln['name'] = params['GA_algo'].__name__ if 'GA_algo' in params else algo.__name__
         viz.report(dict_data, opt_soln, metrics)
 
 if __name__ == '__main__':

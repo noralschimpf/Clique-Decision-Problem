@@ -20,6 +20,7 @@ def load_dir(dir: str):
                     if row[0][0] == '%': head+=1
                     else: break
             nda_edges = np.genfromtxt(joinfile, skip_header=head, dtype=int).astype(np.uint32)
+            if nda_edges.shape[1] > 2: nda_edges = nda_edges[:,:2]
             output['nda'] = nda_edges
     output['name'] = os.path.split(dir)[1]
     return output
@@ -36,6 +37,7 @@ def load_DIMACS(file: str):
                 output[row[1]] = row[2]
             else: break
     nda_edges = np.genfromtxt(file, skip_header=skiphead, dtype=int).astype(np.uint32)
+    if nda_edges.shape[1] > 2: nda_edges = nda_edges[:, :2]
     output['nda'] = nda_edges
     output['name'] = os.path.split(file)[1]
     return output
