@@ -43,8 +43,7 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
         best_fits[g] = fitness.max()
         if soln_fit is None or best_fits[g] > soln_fit:
             soln_fit = best_fits[g]
-            idx_soln_fit = [i for i in range(len(fitness)) if fitness[i] == soln_fit][0]
-            soln_nodelist = population[idx_soln_fit]
+            soln_nodelist = population[np.where(fitness == soln_fit)[0][0]]
         # if not len(fitness[fitness >= 0]) < int(len(fitness)/10): fitness[fitness < 0] = 0
         fitness = scl.fit_transform(fitness.reshape(-1,1))
         fitness = np.exp(2*(fitness-1))
@@ -83,7 +82,7 @@ def GA_Simulate(nda_adjMat: np.array, params: dict):
 
         if n == 0: frames = soln_dict['frames']
         fit_curves[n] = soln_dict['training']
-        soln_fits[n] = BackKhuriFitness(soln_dict['soln_nodelist'],nda_adjCompl)
+        soln_fits[n] = BackKhuriFitness(1-soln_dict['soln_nodelist'],nda_adjCompl)
         if soln_fits[n] > soln_fits[best_fit_idx] or best_fit_idx == -1:
             best_fit_idx = n
             best_edgelist = soln_dict['soln_edgelist']

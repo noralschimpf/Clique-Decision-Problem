@@ -17,7 +17,7 @@ elif 'DIMACS' in datadir: fileorder = ['johnson8-2-4.mtx', 'MANN-a9.mtx',  'hamm
 def main(algo):
     # load relevant TSP data
     # fileorder = fileorder[1:2]
-    params = {'animate': False, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': GA_BK.GA_BackKhuri,
+    params = {'animate': False, 'n': 10, 'g': 400, 'k': 50, 'GA_algo': GA_BK.GA_BackKhuri,
                                 'f_fit': GA_BK.BackKhuriFitness}
     for f in range(len(fileorder)):
         file =  os.path.join(datadir,fileorder[f])
