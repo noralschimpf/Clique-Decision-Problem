@@ -58,7 +58,7 @@ def report(data: dict, soln: dict, metrics: dict):
     fig.clf(); ax.cla(); P.close()
 
 
-    if 'GA' in soln['name']:
+    if 'GA' in soln['name'] or 'WoC' in soln['name']:
         # Plot training figure (for GA algos)
         fig, ax = P.subplots(1,1)
         for i in range(len(soln['fit_curves'])):

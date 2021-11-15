@@ -74,7 +74,7 @@ def acc_cross(pair1, pair2, k, f_cross):
     :param f_cross:
     :return:
     """
-    newpop = np.empty((k, len(pair1[0])), dtype=int32)
+    newpop = np.empty((k, len(pair1[0])), dtype=uint32)
     for i in prange(k):
         newpop[i] = f_cross(pair1[i], pair2[i])
     return newpop
@@ -105,7 +105,7 @@ def rand_choice_nb(arr, prob):
     return arr[np.searchsorted(np.cumsum(prob), np.random.random(), side="right")]
 
 @jit(nopython=True)
-def mut_invert(ind, p):
+def mut_invert(ind, p=1/50):
     """
     mutation function: each node is inverted with probability p
     :param ind: individual
@@ -117,3 +117,16 @@ def mut_invert(ind, p):
         if mut and ind[i] == 1: ind[i] = 0
         elif mut and ind[i] == 0: ind[i] = 1
     return ind
+
+@jit(nopython=True, parallel=True)
+def acc_mut(pop, f_mut):
+    """
+    numba-compiled list comprehension for pair breeding
+    :param pop:
+    :param f_mut:
+    :return:
+    """
+    newpop = np.empty_like(pop, dtype=uint32)
+    for i in prange(len(newpop)):
+        newpop[i] = f_mut(pop[i])
+    return newpop

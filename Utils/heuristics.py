@@ -48,3 +48,23 @@ def BackKhuriFitness(ind: np.array, adjMat: np.array):
             pen += ind[j]*adjMat[i,j]
         fit += (ind[i] - len(ind)*ind[i]*pen)
     return fit
+
+
+def cliqueSize(nodelist: np.array, adjMat: np.array):
+    if isClique(nodelist, adjMat): return nodelist.sum()
+    else: return 0
+
+@jit(nopython=True)
+def BKFitPop(pop: np.array, adjmat: np.array):
+    """
+    wrapper for BackKhuriFitness across complete population
+    :param pop: population matrix
+    :param adjmat:adjacency matrix
+    :return:
+    """
+    fit = np.zeros((len(pop)))
+    for i in range(len(fit)):
+        fit[i] = BackKhuriFitness(pop[i], adjmat)
+    # total = fit.sum()
+    # for i in range(len(fit)): fit[i] = fit[i] / total
+    return fit

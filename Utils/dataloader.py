@@ -1,6 +1,7 @@
 import os, csv
 import numpy as np
 import networkx as nx
+from numba import jit
 
 def load_dir(dir: str):
     output = {}
@@ -74,6 +75,15 @@ def nodelist_to_edgelist(nodelist: np.array, adjmat: np.array):
     G = nx.from_numpy_array(adjmat)
     H = G.subgraph(nodes=np.where(nodelist==1)[0])
     return np.array(list(H.edges)) +1
+
+@jit(nopython=True)
+def nodelist_to_adjmarks(nodelist: np.array, adjmat: np.array):
+    adj = np.copy(adjmat)
+    for i in range(len(nodelist)):
+        for j in range(len(nodelist)):
+            if not( nodelist[i] == 1 and nodelist[j] == 1): adj[i,j] = 0
+    return adj
+
 
 def edgelist_to_nodelist(edgelist: np.array):
     nodes = []

@@ -2,11 +2,13 @@ import numpy as np
 import tqdm
 from numba import uint32, jit
 from sklearn.preprocessing import MinMaxScaler
+from scipy.special import betaincinv
 import Utils.GeneticFns as GF
 import Utils.dataloader as dl
+from Algos import WisdomOfCrowds as WOC
 from Utils.heuristics import BackKhuriFitness, BKFitPop
 
-def GA_BackKhuri(nda_adjMat: np.array, params: dict):
+def WoC_BackKhuri(nda_adjMat: np.array, params: dict):
     """
     Genetic Algorithm implemented by Thomas Back and Sami Kuri in
     "An Evolutionary Heuristic for the Maximum Independent Set Problem"
@@ -40,11 +42,18 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
 
         # Assess fitness using graded penalty
         fitness = BKFitPop(population, nda_adjCompl)
-        best_fits[g] = fitness.max()
+
+        # WISDOM OF CROWDS: generate Agreement Matrix using current population
+        agrMat = WOC.agrMat(population, nda_adjMat)
+        # scoreMat = betaincinv(params['b_1'], params['b_2'], agrMat / agrMat.sum())
+        scoreMat = agrMat / params['k']
+        woc_nodelist = WOC.greedy_cliquegen(scoreMat, nda_adjMat)
+        best_fits[g] = BackKhuriFitness(woc_nodelist, nda_adjCompl)
+
         if soln_fit is None or best_fits[g] > soln_fit:
             soln_fit = best_fits[g]
-            soln_nodelist = population[np.where(fitness == soln_fit)[0][0]]
-        # if not len(fitness[fitness >= 0]) < int(len(fitness)/10): fitness[fitness < 0] = 0
+            soln_nodelist = woc_nodelist
+
         fitness = scl.fit_transform(fitness.reshape(-1,1))
         fitness = np.exp(2*(fitness-1))
         fitness = fitness / fitness.sum()
@@ -52,22 +61,20 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
 
         # Append best route of generation to animation
         if params['animate'] and g % 10 == 0:
-            idx_best = [i for i in range(len(fitness)) if fitness[i] == bestfit_normed][0]
-            best_ind = population[idx_best]
-            frames.append(dl.nodelist_to_edgelist(best_ind, nda_adjMat))
+            frames.append(dl.nodelist_to_edgelist(soln_nodelist, nda_adjMat))
 
         # Select and "breed" pairs
         pairs = GF.pairgen(fitness, np.arange(len(population)).astype(np.uint32), 50)
         pair1, pair2 = population[pairs[:50]],population[pairs[50:]]
         #   Merge and mutate pairs
-        population = np.array([GF.cross_p_point(pair1[i], pair2[i], p=2) for i in range(50)])
-        population = np.array([GF.mut_invert(population[i], 1/len(population[0])) for i in range(50)])
+        population = GF.acc_cross(pair1, pair2, params['k'], GF.cross_p_point) # np.array([GF.cross_p_point(pair1[i], pair2[i], p=2) for i in range(50)])
+        population = GF.acc_mut(population, GF.mut_invert) # np.array([GF.mut_invert(population[i], 1/len(population[0])) for i in range(50)])
 
     # soln_nodelist = 1 - soln_nodelist
     return {'soln_edgelist': dl.nodelist_to_edgelist(soln_nodelist, nda_adjMat), 'soln_size': soln_nodelist.sum(),
             'soln_nodelist': soln_nodelist, 'training': best_fits, 'frames': frames, 'soln_fit': soln_fit}
 
-def GA_Simulate(nda_adjMat: np.array, params: dict):
+def WoC_BK_Simulate(nda_adjMat: np.array, params: dict):
     nda_adjCompl = 1 - nda_adjMat
     fit_curves = np.zeros((params['n'], params['g']))
     soln_fits = np.zeros(params['n'])
