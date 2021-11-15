@@ -71,6 +71,7 @@ def adjMat_to_edgelist(adjmat: np.array):
                 edgeno += 1
     return edgelist +1
 
+
 def nodelist_to_edgelist(nodelist: np.array, adjmat: np.array):
     G = nx.from_numpy_array(adjmat)
     H = G.subgraph(nodes=np.where(nodelist==1)[0])

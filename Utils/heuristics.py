@@ -1,8 +1,9 @@
 import numpy as np
 from numba import jit
+import networkx as nx
 from Utils import dataloader as dl
 
-# @jit(nopython=True)
+@jit(nopython=True, cache=True)
 def isClique(nodes: np.array, adjmat: np.array):
     """
     Verify the current selection of nodes constitutes a clique
@@ -12,14 +13,23 @@ def isClique(nodes: np.array, adjmat: np.array):
     :param adjmat:
     :return:
     """
-    edgelist = np.ascontiguousarray(dl.nodelist_to_edgelist(nodes,adjmat))
-    if edgelist.shape == (0,): return False
+    submat = adjmat[nodes == 1][:, nodes == 1]
+    np.fill_diagonal(submat,1)
+    return submat.sum() == submat.size
+    #
+    # for i in range(len(adjmat)):
+    #     adjmat[i,i] = 0
+    # G = nx.from_numpy_array(adjmat)
+    # H = G.subgraph(nodes)
+    # return H.size() == len(nodes)*(len(nodes)-1)/2
+    # edgelist = np.ascontiguousarray(dl.nodelist_to_edgelist(nodes,adjmat))
+    # if edgelist.shape == (0,): return False
 
     # Check that each row in cliqueList is also in the actual edgelist
-    cliquelist = np.ascontiguousarray(dl.nodelist_to_edgelist(nodes, 1 - np.eye(len(adjmat))))
-    void_dt = np.dtype((np.void, edgelist.dtype.itemsize * edgelist.shape[1]))
-    edgelist, cliquelist =  edgelist.view(void_dt).ravel(), cliquelist.view(void_dt).ravel()
-    return np.in1d(cliquelist, edgelist).sum() == len(cliquelist)
+    # cliquelist = np.ascontiguousarray(dl.nodelist_to_edgelist(nodes, 1 - np.eye(len(adjmat))))
+    # void_dt = np.dtype((np.void, edgelist.dtype.itemsize * edgelist.shape[1]))
+    # edgelist, cliquelist =  edgelist.view(void_dt).ravel(), cliquelist.view(void_dt).ravel()
+    # return np.in1d(cliquelist, edgelist).sum() == len(cliquelist)
     # idxnodes = np.where(nodes == 1)[0]
     # iternodes = itertools.combinations(idxnodes, 2)
     # for iter in iternodes:
@@ -68,3 +78,38 @@ def BKFitPop(pop: np.array, adjmat: np.array):
     # total = fit.sum()
     # for i in range(len(fit)): fit[i] = fit[i] / total
     return fit
+
+def MarchRecursive(population: np.array, adjMat: np.array):
+    """
+    Wrapper function for MarchioriRepair
+    :param population:
+    :param adjMat:
+    :return:
+    """
+    for i in range(len(population)):
+        population[i] = MarchioriRepair(population[i], adjMat)
+    return population
+
+def MarchioriRepair(individual: np.array, adjMat: np.array):
+    """
+    Steps 2 and 3 of the heuristic algorithm in
+    "A Simple Heuristic Based Genetic Algorithm for the Maximum Clique Problem" (Marchiori)
+    :param individual: a nodelist
+    :param adjMat: the adjacency matrix of the complete graph
+    :return: repaired nodelists
+    """
+    # Step 1. Repair by deleting nodes until a clique is formed
+    while (not isClique(individual, adjMat)) and (individual.sum() > 1):
+        idx_ones = np.where(individual == 1)[0]
+        individual[idx_ones[np.random.randint(0,high=len(idx_ones))]] = 0
+
+    # Step 2. Extend the clique with randomly-selected node
+    accept = False; idx_node = -1
+    while not accept:
+        idx_node = np.random.randint(0,high=len(individual))
+        if individual[idx_node] == 0: accept = True
+
+    tmp = individual.copy()
+    tmp[idx_node] = 1
+    if isClique(tmp, adjMat): return tmp
+    else: return individual

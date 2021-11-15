@@ -5,20 +5,22 @@ import os, tracemalloc, time
 
 
 def main(algo):
-    datadir = 'Data/KONNECT'
+    datadir = 'Data/DIMACS'
     if 'KONNECT' in datadir:
         fileorder = ['brunson_southern-women', 'brunson_south-africa', 'ucidata-gama', 'moreno_taro',
                      'ucidata-zachary', 'hiv', 'moreno_lesmis', 'arenas-jazz', 'moreno_innovation',
                      'maayan-faa', 'opsahl-powergrid']
+        # fileorder = [ 'moreno_innovation',
+        #              'maayan-faa', 'opsahl-powergrid']
     elif 'DIMACS' in datadir:
         fileorder = ['johnson8-2-4.mtx', 'MANN-a9.mtx', 'hamming6-2.mtx', 'hamming6-4.mtx',
                      'johnson8-4-4.mtx', 'johnson16-2-4.mtx', 'C125-9.mtx', 'keller4.mtx',
                      'brock200-1.mtx', 'brock200-2.mtx', 'brock200-3.mtx', 'brock200-4.mtx',
                      'c-fat200-1.mtx', 'c-fat200-2.mtx', 'c-fat200-5.mtx']
-    # fileorder = fileorder[1:2]
+    # fileorder = fileorder[2:]
 
     # load relevant TSP data
-    params = {'animate': False, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': WoC.WoC_BackKhuri,'b_1': 1, 'b_2': 3,
+    params = {'animate': True, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': WoC.WoC_BackKhuri, 'b_1': 1, 'b_2': 3,
                                 'f_fit': GA_BK.BackKhuriFitness}
 
     for f in range(len(fileorder)):

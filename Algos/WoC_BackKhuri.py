@@ -44,10 +44,10 @@ def WoC_BackKhuri(nda_adjMat: np.array, params: dict):
         fitness = BKFitPop(population, nda_adjCompl)
 
         # WISDOM OF CROWDS: generate Agreement Matrix using current population
-        agrMat = WOC.agrMat(population, nda_adjMat)
+        agrMat = WOC.agrMat(population)
         # scoreMat = betaincinv(params['b_1'], params['b_2'], agrMat / agrMat.sum())
         scoreMat = agrMat / params['k']
-        woc_nodelist = WOC.greedy_cliquegen(scoreMat, nda_adjMat)
+        woc_nodelist = WOC.greedy_cliquegen(scoreMat)
         best_fits[g] = BackKhuriFitness(woc_nodelist, nda_adjCompl)
 
         if soln_fit is None or best_fits[g] > soln_fit:
