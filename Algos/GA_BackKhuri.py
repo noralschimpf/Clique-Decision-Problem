@@ -17,13 +17,12 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
     {k: population size,g: generations, f_fit: fitness function, f_cross: crossover function, f_mut: mutation function}
     :return:
     """
-
     # DEFINED IN PAPER
-    params['k'] = 50
-    params['g'] = 400
-    params['f_fit'] = BackKhuriFitness
-    params['f_cross'] = GF.cross_p_point
-    params['f_mut'] = GF.mut_invert
+    # params['k'] = 50
+    # params['g'] = 400
+    # params['f_fit'] = BackKhuriFitness
+    # params['f_cross'] = GF.cross_p_point
+    # params['f_mut'] = GF.mut_invert
 
     # Author algorithm solves for maximum clique in G' = (V,E')
     nda_adjCompl = 1 - nda_adjMat
@@ -63,7 +62,6 @@ def GA_BackKhuri(nda_adjMat: np.array, params: dict):
         population = np.array([GF.cross_p_point(pair1[i], pair2[i], p=2) for i in range(50)])
         population = np.array([GF.mut_invert(population[i], 1/len(population[0])) for i in range(50)])
 
-    # soln_nodelist = 1 - soln_nodelist
     return {'soln_edgelist': dl.nodelist_to_edgelist(soln_nodelist, nda_adjMat), 'soln_size': soln_nodelist.sum(),
             'soln_nodelist': soln_nodelist, 'training': best_fits, 'frames': frames, 'soln_fit': soln_fit}
 

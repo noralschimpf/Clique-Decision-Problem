@@ -8,7 +8,6 @@ def isClique(nodes: np.array, adjmat: np.array):
     """
     Verify the current selection of nodes constitutes a clique
     method for checking edges from:
-    https://stackoverflow.com/questions/48323576/check-if-all-rows-in-one-array-are-present-in-another-bigger-array
     :param nodes:
     :param adjmat:
     :return:
@@ -16,25 +15,6 @@ def isClique(nodes: np.array, adjmat: np.array):
     submat = adjmat[nodes == 1][:, nodes == 1]
     np.fill_diagonal(submat,1)
     return submat.sum() == submat.size
-    #
-    # for i in range(len(adjmat)):
-    #     adjmat[i,i] = 0
-    # G = nx.from_numpy_array(adjmat)
-    # H = G.subgraph(nodes)
-    # return H.size() == len(nodes)*(len(nodes)-1)/2
-    # edgelist = np.ascontiguousarray(dl.nodelist_to_edgelist(nodes,adjmat))
-    # if edgelist.shape == (0,): return False
-
-    # Check that each row in cliqueList is also in the actual edgelist
-    # cliquelist = np.ascontiguousarray(dl.nodelist_to_edgelist(nodes, 1 - np.eye(len(adjmat))))
-    # void_dt = np.dtype((np.void, edgelist.dtype.itemsize * edgelist.shape[1]))
-    # edgelist, cliquelist =  edgelist.view(void_dt).ravel(), cliquelist.view(void_dt).ravel()
-    # return np.in1d(cliquelist, edgelist).sum() == len(cliquelist)
-    # idxnodes = np.where(nodes == 1)[0]
-    # iternodes = itertools.combinations(idxnodes, 2)
-    # for iter in iternodes:
-    #     if adjmat[iter[0],iter[1]] == 0: return False
-    # return True
 
 @jit(nopython=True)
 def get_edgecount(adjmat: np.array):

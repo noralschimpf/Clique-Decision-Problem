@@ -20,7 +20,7 @@ def main(algo):
     # fileorder = fileorder[2:]
 
     # load relevant TSP data
-    params = {'animate': True, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': WoC.WoC_BackKhuri, 'b_1': 1, 'b_2': 3,
+    params = {'animate': True, 'n': 100, 'g': 400, 'k': 50, 'GA_algo': CGA.cGA_BackKhuri_Marchiori(), 'b_1': 1, 'b_2': 3,
                                 'f_fit': GA_BK.BackKhuriFitness}
 
     for f in range(len(fileorder)):
@@ -47,5 +47,5 @@ def main(algo):
 
 if __name__ == '__main__':
     # algos = [GA_BK.GA_Simulate, WorstOut.WorstOutHeuristic]
-    algos = [WoC.WoC_BK_Simulate]
+    algos = [CGA.cGA_Simulate]
     for a in algos: main(a)

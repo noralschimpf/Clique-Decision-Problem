@@ -18,9 +18,6 @@ def cGA_BackKhuri_Marchiori(nda_adjMat: np.array, params: dict):
     '''
     GA_frames, woc_frames = [], []
 
-    # BackKhuri Fitness metric relies on complement of adjacenency matrix
-    nda_adjCompl = 1 - nda_adjMat
-
     # initialize the adjacency table
     nodeTable = np.zeros(len(nda_adjMat))
     for i in range(nodeTable.shape[0]):
@@ -29,7 +26,6 @@ def cGA_BackKhuri_Marchiori(nda_adjMat: np.array, params: dict):
     best_fits = np.zeros(params['g'])
     frames = []
     soln_nodelist, soln_fit = None, None
-    scl = MinMaxScaler(feature_range=(0, 1))
 
     best_fits, woc_fits = np.zeros(params['g']), np.zeros(params['g'])
 
